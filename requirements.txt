@@ -1,0 +1,8 @@
+bokeh
+matplotlib
+mplsoccer
+pandas
+plotly
+sklearn
+streamlit
+streamlit_bokeh
