@@ -3,6 +3,6 @@ matplotlib
 mplsoccer
 pandas
 plotly
-sklearn
+scikit-learn
 streamlit
 streamlit_bokeh
