@@ -98,14 +98,14 @@ def display_possession_bar(possession):
     st.markdown(container_html, unsafe_allow_html=True)
 
 # Load DataFrames
-df_gn_display = pd.read_pickle("df_gn.pkl")
-df_sh_display = pd.read_pickle("df_sh.pkl")
-df_ps_display = pd.read_pickle("df_ps.pkl")
-df_pass_display = pd.read_pickle("df_pass.pkl")
-df_dfd_display = pd.read_pickle("df_dfd.pkl")
-df_gca_display = pd.read_pickle("df_gca.pkl")
-df_shooting_display = pd.read_pickle("df_shooting.pkl")
-merge_gcas_display = pd.read_pickle("merge_gcas.pkl")
+df_gn_display = pd.read_pickle("/mount/src/final-project-visdat/df_gn.pkl")
+df_sh_display = pd.read_pickle("/mount/src/final-project-visdat/df_sh.pkl")
+df_ps_display = pd.read_pickle("/mount/src/final-project-visdat/df_ps.pkl")
+df_pass_display = pd.read_pickle("/mount/src/final-project-visdat/df_pass.pkl")
+df_dfd_display = pd.read_pickle("/mount/src/final-project-visdat/df_dfd.pkl")
+df_gca_display = pd.read_pickle("/mount/src/final-project-visdat/df_gca.pkl")
+df_shooting_display = pd.read_pickle("/mount/src/final-project-visdat/df_shooting.pkl")
+merge_gcas_display = pd.read_pickle("/mount/src/final-project-visdat/merge_gcas.pkl")
 
 rounds = df_gn_display.index.unique().tolist()
 
