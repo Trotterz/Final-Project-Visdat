@@ -311,7 +311,7 @@ with tab2:
     st.dataframe(df_sh_display, use_container_width=True)
 
 with tab3:
-    st.subheader("📊 Visualisasi Tambahan Possession (Optional)")
+    st.subheader("📊 Possession Visualization")
 
     clubs = df_sh_display.index.tolist()
 
@@ -401,7 +401,7 @@ with tab3:
     st.dataframe(df_ps_display, use_container_width=True)
 
 with tab4:
-    st.subheader("📊 Visualisasi Tambahan Passing")
+    st.subheader("📊 Passing Visualization")
     
     with st.container():
         fig_ppg = px.bar(
@@ -426,7 +426,7 @@ with tab4:
     st.dataframe(df_pass_display, use_container_width=True)
 
 with tab5:
-    st.subheader("📅 Defensive Stats (Squad)")
+    st.subheader("📅 Defensive Data (Squad)")
 
     squad_options = df_dfd_display.index.unique().tolist()
     selected_squad = st.selectbox("Select Squad", squad_options)
@@ -504,7 +504,7 @@ with tab6:
     st.dataframe(df_gca_display, use_container_width=True)
 
     st.markdown("---")
-    st.subheader("📊 Visualisasi GCA (Optional)")
+    st.subheader("📊 Additional GCA Visualization")
 
     show_gca_chart = st.checkbox("Tampilkan Line Chart GCA Nottingham Forest")
 
