@@ -132,10 +132,12 @@ with tab1:
         y_opp = df_gn_display['xGA'].to_list()
 
         # Create a ColumnDataSource with all the necessary data
+        notes = ["Head Coach Change" if r == coach_change_round else "" for r in x]
         source = ColumnDataSource(data=dict(
             x=x,
             y=y,
             y_opp=y_opp,
+            note=notes
         ))
 
         # create a new plot with a title and axis labels
@@ -147,6 +149,7 @@ with tab1:
                 ("Round", "@x"),
                 ("Team Chances", "@y"),
                 ("Opponent Chances", "@y_opp"),
+                ("Head Coach Change", "@note"),
             ],
             mode='mouse' # Add mode='mouse' for better interaction
         )
@@ -163,11 +166,6 @@ with tab1:
             index_loc = x.index(coach_change_round)
             vline = Span(location=index_loc, dimension='height', line_color='red', line_width=2, line_dash='dashed')
             p.add_layout(vline)
-            
-            label = Label(x=index_loc + 0.1, y=max(max(y), max(y_opp)),
-                          text='Head Coach Change', text_font_size='10pt',
-                          text_color='red', angle=1.57)
-            p.add_layout(label)
         
         # show the results
         streamlit_bokeh(p, theme='dark_minimal')
