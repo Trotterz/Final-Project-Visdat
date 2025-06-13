@@ -179,6 +179,8 @@ with tab1:
             after_box = BoxAnnotation(left=coach_index + 1, fill_alpha=0.1, fill_color='peachpuff')
             p.add_layout(after_box)
         
+        p.line(x=[coach_index], y=[0], line_color='red', line_dash='dashed', legend_label='Head Coach Change')
+        
         # show the results
         streamlit_bokeh(p, theme='dark_minimal')
 
