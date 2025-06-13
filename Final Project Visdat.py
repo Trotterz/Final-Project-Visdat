@@ -160,8 +160,8 @@ with tab1:
         p.add_tools(hover)
 
         # add multiple renderers
-        p.line(x='x_numeric', y='y', source=source, legend_label="Team Chances", color="#0072B2", line_width=3)
-        p.line(x='x_numeric', y='y_opp', source=source, legend_label="Opponent Chances", color="#E69F00", line_width=3)
+        p.line(x='x', y='y', source=source, legend_label="Team Chances", color="#0072B2", line_width=3)
+        p.line(x='x', y='y_opp', source=source, legend_label="Opponent Chances", color="#E69F00", line_width=3)
 
         # --- Custom Ticker Logic ---
         # Define how often you want a tick. For example, every 5 rounds.
