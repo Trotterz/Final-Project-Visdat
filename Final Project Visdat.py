@@ -8,7 +8,7 @@ import bokeh
 from bokeh.plotting import figure
 from bokeh.io import output_notebook
 from bokeh.io import curdoc
-from bokeh.models import HoverTool, ColumnDataSource, Span, Label
+from bokeh.models import HoverTool, ColumnDataSource, Span, FixedTicker, Label
 from streamlit_bokeh import streamlit_bokeh
 import plotly.express as px
 
@@ -141,10 +141,9 @@ with tab1:
         # create a new plot with a title and axis labels
         p = figure(x_axis_label="Round", y_axis_label="Value", x_range=x, height=140, sizing_mode="stretch_width")
 
-        # Hanya tampilkan label setiap 10 ronde agar tidak menumpuk
+        # Hanya menampilkan label setiap 10 ronde agar tidak menumpuk
         step = 10
-        filtered_ticks = x[::step]
-        p.xaxis.ticker = [i for i in filtered_ticks]
+        p.xaxis.ticker = FixedTicker(ticks=list(range(0, len(x), step)))
 
         # Menambahkan garis penanda perubahan pelatih
         manager_change_round = "23/24_19"
