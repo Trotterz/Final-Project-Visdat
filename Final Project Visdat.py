@@ -127,8 +127,6 @@ with tab1:
 
     st.subheader("Chance of Goal for Team vs Opponent")
     with st.container():
-        rounds = df_gn_display.index.to_list()
-        x_numeric = list(range(len(rounds)))
         x = df_gn_display.index.to_list()
         y = df_gn_display['xG'].to_list()
         y_opp = df_gn_display['xGA'].to_list()
@@ -137,7 +135,7 @@ with tab1:
         # Create a ColumnDataSource with all the necessary data
         notes = ["Head Coach Change" if r == coach_change_round else "" for r in x]
         source = ColumnDataSource(data=dict(
-            x=x_numeric,
+            x=x,
             y=y,
             y_opp=y_opp,
             round=rounds,
@@ -162,11 +160,6 @@ with tab1:
         # add multiple renderers
         p.line(x='x', y='y', source=source, legend_label="Team Chances", color="#0072B2", line_width=3)
         p.line(x='x', y='y_opp', source=source, legend_label="Opponent Chances", color="#E69F00", line_width=3)
-        # X-axis label setup
-        tick_interval = 5
-        visible_ticks = x_numeric[::tick_interval]
-        p.xaxis.ticker = visible_ticks
-        p.xaxis.major_label_overrides = {i: rounds[i] for i in visible_ticks}
         p.xaxis.major_label_orientation = 0.785
 
         # Vertical line for coach change
