@@ -8,7 +8,7 @@ import bokeh
 from bokeh.plotting import figure
 from bokeh.io import output_notebook
 from bokeh.io import curdoc
-from bokeh.models import HoverTool, ColumnDataSource, Span, Label, BoxAnnotation
+from bokeh.models import HoverTool, ColumnDataSource, Span, Label, BoxAnnotation, FixedTicker
 from streamlit_bokeh import streamlit_bokeh
 import plotly.express as px
 
@@ -161,6 +161,9 @@ with tab1:
         p.line(x='x', y='y', source=source, legend_label="Team Chances", color="#0072B2", line_width=3)
         p.line(x='x', y='y_opp', source=source, legend_label="Opponent Chances", color="#E69F00", line_width=3)
         p.xaxis.major_label_orientation = 0.785
+
+        ticker_indices = list(range(0, len(x), 5))
+        p.xaxis.ticker = FixedTicker(ticks=ticker_indices)
 
         # Vertical line for coach change
         if coach_change_round in rounds:
