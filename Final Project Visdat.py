@@ -508,14 +508,21 @@ with tab5:
 
     # === Visualisasi 4: Stacked Bar Chart for Tackles ===
     st.markdown("### Tackles per Area (Stacked Bar)")
+
     # 1. Pilih kolom yang diperlukan, termasuk 'Goals Against' untuk pengurutan.
     tackles_to_sort = df_dfd_display[['Tackles Def 3rd', 'Tackles Mid 3rd', 'Tackles Att 3rd', 'Goals Against']].copy()
+
     # 2. Urutkan DataFrame berdasarkan 'Goals Against' secara menurun.
     tackles_sorted = tackles_to_sort.sort_values(by='Goals Against', ascending=False)
+
     # 3. Siapkan data final untuk plotting dengan urutan kolom yang benar untuk stacking.
+    # Urutan kolom di sini menentukan urutan tumpukan dari bawah ke atas: Def -> Mid -> Att
     tackles_for_plot = tackles_sorted[['Tackles Def 3rd', 'Tackles Mid 3rd', 'Tackles Att 3rd']]
-    # Plotting dengan warna yang merepresentasikan area
-    st.bar_chart(tackles_for_plot, color=["#3E68C9", "#29B09D", "#FF4B4B"])
+
+    # --- PENYESUAIAN WARNA ---
+    # Plotting dengan warna yang merepresentasikan area seperti di gambar Anda:
+    # Biru (Def), Hijau (Mid), Oranye (Att).
+    st.bar_chart(tackles_for_plot, color=["#1f77b4", "#2ca02c", "#ff7f0e"])
 
     # === Visualisasi 5: Radar Chart (Matplotlib) ===
     st.markdown("### Radar Chart Performa Defensif (Nottingham Forest)")
@@ -571,126 +578,6 @@ with tab5:
 
     # 3. Menampilkan plot di Streamlit
     st.pyplot(fig_radar)
-
-# with tab5:
-#     st.subheader("📅 Defensive Data (Squad)")
-
-#     squad_options = df_dfd_display.index.unique().tolist()
-#     selected_squad = st.selectbox("Select Squad", squad_options)
-
-#     # Tampilkan tabel untuk squad terpilih
-#     st.dataframe(df_dfd_display.loc[[selected_squad]], use_container_width=True)
-
-#     st.markdown("---")
-#     st.subheader("🔴 Defensive Visualizations (Pilih Sesuai Kebutuhan)")
-
-#     show_goals_against = st.checkbox("Tampilkan Goals Against")
-#     show_cleansheets = st.checkbox("Tampilkan Cleansheets")
-#     show_xga = st.checkbox("Tampilkan xGA")
-#     show_tackles_stack = st.checkbox("Tampilkan Tackles per Area (Stacked)")
-#     show_radar_def = st.checkbox("Tampilkan Radar Chart Pertahanan (Nottingham Forest)")
-
-#     # --- Helper function to prepare data for highlighting in st.bar_chart ---
-#     def prepare_data_for_highlighting(df, column_name, highlight_name):
-#         # Create a new DataFrame for plotting
-#         plot_df = pd.DataFrame(index=df.index)
-#         # Create one column for the highlighted team
-#         plot_df[highlight_name] = df.apply(lambda row: row[column_name] if row.name == highlight_name else None, axis=1)
-#         # Create another column for all other teams
-#         plot_df['Other Teams'] = df.apply(lambda row: row[column_name] if row.name != highlight_name else None, axis=1)
-#         return plot_df
-
-#     # Goals Against
-#     if show_goals_against:
-#         st.markdown("### Goals Against (Seluruh Tim)")
-#         plot_data = prepare_data_for_highlighting(df_dfd_display, 'Goals Against', "Nott'ham Forest")
-#         st.bar_chart(plot_data, color=["#FF4B4B", "#808080"]) # Red for Forest, Grey for others
-
-#     # Cleansheets
-#     if show_cleansheets:
-#         st.markdown("### Cleansheets (Seluruh Tim)")
-#         plot_data = prepare_data_for_highlighting(df_dfd_display, 'Cleansheets', "Nott'ham Forest")
-#         st.bar_chart(plot_data, color=["#FF4B4B", "#808080"])
-
-#     # xGA
-#     if show_xga:
-#         st.markdown("### xGA (Expected Goals Against)")
-#         plot_data = prepare_data_for_highlighting(df_dfd_display, 'xGA', "Nott'ham Forest")
-#         st.bar_chart(plot_data, color=["#FF4B4B", "#808080"])
-
-#     # Stacked Bar Chart for Tackles
-#     if show_tackles_stack:
-#         st.markdown("### Tackles per Area (Stacked Bar)")
-
-#         # --- PERUBAHAN DIMULAI DI SINI ---
-
-#         # 1. Pilih kolom yang diperlukan, termasuk 'Goals Against' untuk pengurutan.
-#         tackles_to_sort = df_dfd_display[['Tackles Def 3rd', 'Tackles Mid 3rd', 'Tackles Att 3rd', 'Goals Against']].copy()
-
-#         # 2. Urutkan DataFrame berdasarkan 'Goals Against' secara menurun.
-#         tackles_sorted = tackles_to_sort.sort_values(by='Goals Against', ascending=False)
-
-#         # 3. Siapkan data final untuk plotting dengan urutan kolom yang benar untuk stacking.
-#         # Urutan kolom di sini menentukan urutan tumpukan dari bawah ke atas.
-#         tackles_for_plot = tackles_sorted[['Tackles Def 3rd', 'Tackles Mid 3rd', 'Tackles Att 3rd']]
-        
-#         # --- PERUBAHAN SELESAI ---
-
-#         # st.bar_chart akan secara otomatis menumpuk kolom sesuai urutan di `tackles_for_plot`.
-#         # Warna juga disesuaikan untuk merepresentasikan area: Biru (Def), Hijau (Mid), Merah (Att).
-#         st.bar_chart(tackles_for_plot, color=["#3E68C9", "#29B09D", "#FF4B4B"])
-
-#     if show_radar_def:
-#         # Radar chart untuk performa defensif Nottingham Forest
-
-#         df_dfd_display['Tackles%'] = df_dfd_display['Tackles'] / df_dfd_display['Tackles'].mean()
-#         df_dfd_display['Tackles Won%'] = df_dfd_display['Tackles Won'] / df_dfd_display['Tackles Won'].mean()
-#         df_dfd_display['Goals Against%'] = df_dfd_display['Goals Against'] / df_dfd_display['Goals Against'].mean()
-#         df_dfd_display['Cleansheets%'] = df_dfd_display['Cleansheets'] / df_dfd_display['Cleansheets'].mean()
-#         df_dfd_display['xGA%'] = df_dfd_display['xGA'] / df_dfd_display['xGA'].mean()
-
-#         to_scale = ['Tackles%', 'Tackles Won%', 'Goals Against%', 'Cleansheets%', 'xGA%']
-#         scaler = MinMaxScaler()
-#         df_dfd_display[to_scale] = scaler.fit_transform(df_dfd_display[to_scale])
-
-#         club_name = "Nott'ham Forest"
-#         club_values = df_dfd_display.loc[club_name, to_scale].tolist()
-#         club_values_full = club_values + [club_values[0]]
-
-#         percentiles = []
-#         for col in to_scale:
-#             val = df_dfd_display.loc[club_name, col]
-#             if col in ['Goals Against%', 'xGA%']:
-#                 pct = (df_dfd_display[col] > val).mean()
-#             else:
-#                 pct = (df_dfd_display[col] < val).mean()
-#             percentiles.append(int(pct * 100))
-
-#         percentiles_full = percentiles + [percentiles[0]]
-
-#         labels = ['Tackles', 'Tackles Won', 'Goals Against', 'Cleansheets', 'xGA']
-#         num_vars = len(labels)
-#         angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
-#         angles_full = angles + [angles[0]]
-
-#         fig_radar, ax_radar = plt.subplots(figsize=(8, 8), subplot_kw=dict(polar=True))
-#         ax_radar.set_theta_offset(np.pi / 2)
-#         ax_radar.set_theta_direction(-1)
-#         ax_radar.set_xticks(angles)
-#         ax_radar.set_xticklabels(labels, fontsize=11, fontweight='medium')
-#         ax_radar.set_yticks([0.25, 0.5, 0.75, 1.0])
-#         ax_radar.set_ylim(0, 1.2)
-
-#         ax_radar.plot(angles_full, club_values_full, color='royalblue', linewidth=2)
-#         ax_radar.fill(angles_full, club_values_full, color='royalblue', alpha=0.25)
-
-#         for angle, value, pct in zip(angles_full, club_values_full, percentiles_full):
-#             y_pos = value + 0.06
-#             y_pos = min(y_pos, 1.15)
-#             ax_radar.text(angle, y_pos, f"{pct}%", ha='center', va='center',
-#                           fontsize=10, fontweight='bold', color='black')
-
-#         st.pyplot(fig_radar)
 
 with tab6:
     st.subheader("📅 Detailed GCA Data")
