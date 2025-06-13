@@ -507,22 +507,41 @@ with tab5:
     st.bar_chart(plot_data_xga, color=["#FF4B4B", "#808080"])
 
     # === Visualisasi 4: Stacked Bar Chart for Tackles ===
-    st.markdown("### Tackles per Area (Stacked Bar)")
+    st.markdown("### Tackles per Area (Stacked Bar - Sorted by Goals Against)")
 
-    # 1. Pilih kolom yang diperlukan, termasuk 'Goals Against' untuk pengurutan.
-    tackles_to_sort = df_dfd_display[['Tackles Def 3rd', 'Tackles Mid 3rd', 'Tackles Att 3rd', 'Goals Against']].copy()
+    # Ambil dan urutkan data berdasarkan Goals Against
+    tackles_data = df_dfd[['Tackles Def 3rd', 'Tackles Mid 3rd', 'Tackles Att 3rd', 'Goals Against']].copy()
+    tackles_data = tackles_data.sort_values(by='Goals Against', ascending=False)
 
-    # 2. Urutkan DataFrame berdasarkan 'Goals Against' secara menurun.
-    tackles_sorted = tackles_to_sort.sort_values(by='Goals Against', ascending=False)
+    # Buat plot stacked bar
+    fig, ax = plt.subplots(figsize=(12, 6))
 
-    # 3. Siapkan data final untuk plotting dengan urutan kolom yang benar untuk stacking.
-    # Urutan kolom di sini menentukan urutan tumpukan dari bawah ke atas: Def -> Mid -> Att
-    tackles_for_plot = tackles_sorted[['Tackles Def 3rd', 'Tackles Mid 3rd', 'Tackles Att 3rd']]
+    # Bar pertama: Defensive third (bawah)
+    ax.bar(tackles_data.index, tackles_data['Tackles Def 3rd'], label='Tackles Def 3rd', color='#1f77b4')
 
-    # --- PENYESUAIAN WARNA ---
-    # Plotting dengan warna yang merepresentasikan area seperti di gambar Anda:
-    # Biru (Def), Hijau (Mid), Oranye (Att).
-    st.bar_chart(tackles_for_plot, color=["#1f77b4", "#2ca02c", "#ff7f0e"])
+    # Bar kedua: Middle third (di atas Def)
+    ax.bar(tackles_data.index,
+           tackles_data['Tackles Mid 3rd'],
+           bottom=tackles_data['Tackles Def 3rd'],
+           label='Tackles Mid 3rd',
+           color='#2ca02c')
+
+    # Bar ketiga: Attacking third (di atas Def + Mid)
+    ax.bar(tackles_data.index,
+           tackles_data['Tackles Att 3rd'],
+           bottom=tackles_data['Tackles Def 3rd'] + tackles_data['Tackles Mid 3rd'],
+           label='Tackles Att 3rd',
+           color='#ff7f0e')
+
+    ax.set_xticks(range(len(tackles_data)))
+    ax.set_xticklabels(tackles_data.index, rotation=45, ha='right')
+    ax.set_xlabel('Squad')
+    ax.set_ylabel('Total Tackles')
+    ax.set_title('Stacked Bar Chart Tackles Def 3rd, Tackles Mid 3rd, Tackles Att 3rd', fontsize=14, fontweight='bold')
+    ax.legend()
+
+    plt.tight_layout()
+    st.pyplot(fig)
 
     # === Visualisasi 5: Radar Chart (Matplotlib) ===
     st.markdown("### Radar Chart Performa Defensif (Nottingham Forest)")
