@@ -533,6 +533,8 @@ with tab5:
            label='Tackles Att 3rd',
            color='#ff7f0e')
 
+    ax.grid(True, axis='y', linestyle='--', alpha=0.7)
+    
     ax.set_xticks(range(len(tackles_data)))
     ax.set_xticklabels(tackles_data.index, rotation=45, ha='right')
     ax.set_xlabel('Squad')
