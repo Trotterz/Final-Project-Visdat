@@ -586,7 +586,7 @@ with tab5:
             ax_radar.text(angle, y_pos, f"{pct}%", ha='center', va='center',
                           fontsize=10, fontweight='bold', color='black')
 
-    st.pyplot(fig_radar)
+        st.pyplot(fig_radar)
 
 with tab6:
     st.subheader("📅 Detailed GCA Data")
