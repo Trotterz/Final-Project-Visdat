@@ -127,6 +127,7 @@ with tab1:
 
     st.subheader("Chance of Goal for Team vs Opponent")
     with st.container():
+        rounds = df_gn_display.index.to_list()
         x = df_gn_display.index.to_list()
         y = df_gn_display['xG'].to_list()
         y_opp = df_gn_display['xGA'].to_list()
@@ -138,6 +139,7 @@ with tab1:
             x=x,
             y=y,
             y_opp=y_opp,
+            round=rounds,
             note=notes
         ))
 
@@ -159,14 +161,28 @@ with tab1:
         # add multiple renderers
         p.line(x='x', y='y', source=source, legend_label="Team Chances", color="#0072B2", line_width=3)
         p.line(x='x', y='y_opp', source=source, legend_label="Opponent Chances", color="#E69F00", line_width=3)
-        p.line(x=[None], y=[None], legend_label="Head Coach Change", line_color="red", line_dash="dashed", line_width=2)
+        # X-axis label setup
+        tick_interval = 5
+        visible_ticks = x_numeric[::tick_interval]
+        p.xaxis.ticker = visible_ticks
+        p.xaxis.major_label_overrides = {i: rounds[i] for i in visible_ticks}
         p.xaxis.major_label_orientation = 0.785
 
-        # Add vertical line for coach change at '23/24_19'
-        if coach_change_round in x:
-            index_loc = x.index(coach_change_round)
-            vline = Span(location=index_loc, dimension='height', line_color='red', line_width=2, line_dash='dashed')
+        # Vertical line for coach change
+        if coach_change_round in rounds:
+            coach_index = rounds.index(coach_change_round)
+
+            # Garis vertikal
+            vline = Span(location=coach_index, dimension='height', line_color='red', line_width=2, line_dash='dashed')
             p.add_layout(vline)
+
+            # Shading: sebelum
+            before_box = BoxAnnotation(right=coach_index, fill_alpha=0.1, fill_color='lightblue')
+            p.add_layout(before_box)
+
+            # Shading: setelah
+            after_box = BoxAnnotation(left=coach_index + 1, fill_alpha=0.1, fill_color='peachpuff')
+            p.add_layout(after_box)
         
         # show the results
         streamlit_bokeh(p, theme='dark_minimal')
