@@ -157,6 +157,18 @@ with tab1:
         p.line(x='x', y='y_opp', source=source, legend_label="Opponent Chances", color="#E69F00", line_width=3)
         p.xaxis.major_label_orientation = 0.785
 
+        # Add vertical line for coach change at '23/24_19'
+        coach_change_round = '23/24_19'
+        if coach_change_round in x:
+            index_loc = x.index(coach_change_round)
+            vline = Span(location=index_loc, dimension='height', line_color='red', line_width=2, line_dash='dashed')
+            p.add_layout(vline)
+            
+            label = Label(x=index_loc + 0.1, y=max(max(y), max(y_opp)),
+                          text='Head Coach Change', text_font_size='10pt',
+                          text_color='red', angle=1.57)
+            p.add_layout(label)
+        
         # show the results
         streamlit_bokeh(p, theme='dark_minimal')
 
