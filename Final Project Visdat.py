@@ -130,6 +130,7 @@ with tab1:
     st.subheader("Chance of Goal for Team vs Opponent")
     with st.container():
         x = df_gn_display.index.to_list()
+        x_numeric = list(range(len(x_labels)))
         y = df_gn_display['xG'].to_list()
         y_opp = df_gn_display['xGA'].to_list()
         
@@ -137,6 +138,7 @@ with tab1:
         notes = ["Head Coach Change" if r == coach_change_round else "" for r in x]
         source = ColumnDataSource(data=dict(
             x=x,
+            x_numeric=x_numeric,
             y=y,
             y_opp=y_opp,
             note=notes
@@ -158,10 +160,23 @@ with tab1:
         p.add_tools(hover)
 
         # add multiple renderers
-        p.line(x='x', y='y', source=source, legend_label="Team Chances", color="#0072B2", line_width=3)
-        p.line(x='x', y='y_opp', source=source, legend_label="Opponent Chances", color="#E69F00", line_width=3)
-        # p.xaxis.visible = False
-        p.xaxis.major_label_orientation = 0.785
+        p.line(x='x_numeric', y='y', source=source, legend_label="Team Chances", color="#0072B2", line_width=3)
+        p.line(x='x_numeric', y='y_opp', source=source, legend_label="Opponent Chances", color="#E69F00", line_width=3)
+
+        # --- Custom Ticker Logic ---
+        # Define how often you want a tick. For example, every 5 rounds.
+        tick_spacing = 5 
+        
+        # Select the numeric locations for the ticks
+        tick_locations = x_numeric[::tick_spacing]
+        
+        # Create a dictionary to map the numeric location to the desired string label
+        tick_labels = {loc: x[loc] for loc in tick_locations}
+
+        # Apply the custom ticks and labels to the x-axis
+        p.xaxis.ticker = FixedTicker(ticks=tick_locations)
+        p.xaxis.major_label_overrides = tick_labels
+        p.xaxis.major_label_orientation = 0.785 # Keep the label rotation
 
         # Vertical line for coach change
         if coach_change_round in rounds:
@@ -179,7 +194,7 @@ with tab1:
             after_box = BoxAnnotation(left=coach_index + 1, fill_alpha=0.1, fill_color='peachpuff')
             p.add_layout(after_box)
         
-        p.line(x=[coach_index], y=[0], line_color='red', line_dash='dashed', legend_label='Head Coach Change')
+        p.line(x=[0], y=[0], line_color='red', line_dash='dashed', legend_label='Head Coach Change', alpha=0)
         
         # show the results
         streamlit_bokeh(p, theme='dark_minimal')
