@@ -141,22 +141,6 @@ with tab1:
         # create a new plot with a title and axis labels
         p = figure(x_axis_label="Round", y_axis_label="Value", x_range=x, height=140, sizing_mode="stretch_width")
 
-        # Hanya menampilkan label setiap 10 ronde agar tidak menumpuk
-        # step = 10
-        # p.xaxis.ticker = FixedTicker(ticks=list(range(0, len(x), step)))
-
-        # Menambahkan garis penanda perubahan pelatih
-        manager_change_round = "23/24_19"
-        max_y = max(max(y), max(y_opp))
-
-        if manager_change_round in x:
-            span = Span(location=manager_change_round, dimension='height', line_color='red', line_dash='dashed', line_width=2)
-            p.add_layout(span)
-            label = Label(x=manager_change_round, y=max_y + 0.3,  # Y sedikit di atas data tertinggi
-                          text='Coach Change', text_font_size="10pt",
-                          text_color='red', text_align='center', angle=0, x_offset=-30)
-            p.add_layout(label)
-
         # Add a HoverTool
         hover = HoverTool(
             tooltips=[
