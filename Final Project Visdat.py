@@ -510,7 +510,7 @@ with tab5:
     st.markdown("### Tackles per Area (Stacked Bar - Sorted by Goals Against)")
 
     # Ambil dan urutkan data berdasarkan Goals Against
-    tackles_data = df_dfd[['Tackles Def 3rd', 'Tackles Mid 3rd', 'Tackles Att 3rd', 'Goals Against']].copy()
+    tackles_data = df_dfd_display[['Tackles Def 3rd', 'Tackles Mid 3rd', 'Tackles Att 3rd', 'Goals Against']].copy()
     tackles_data = tackles_data.sort_values(by='Goals Against', ascending=False)
 
     # Buat plot stacked bar
