@@ -502,27 +502,27 @@ with tab5:
         
     if show_radar_def:
         # Radar chart untuk performa defensif Nottingham Forest
-        df_dfd['Tackles%'] = df_dfd['Tackles'] / df_dfd['Tackles'].mean()
-        df_dfd['Tackles Won%'] = df_dfd['Tackles Won'] / df_dfd['Tackles Won'].mean()
-        df_dfd['Goals Against%'] = df_dfd['Goals Against'] / df_dfd['Goals Against'].mean()
-        df_dfd['Cleansheets%'] = df_dfd['Cleansheets'] / df_dfd['Cleansheets'].mean()
-        df_dfd['xGA%'] = df_dfd['xGA'] / df_dfd['xGA'].mean()
+        df_dfd_display['Tackles%'] = df_dfd_display['Tackles'] / df_dfd_display['Tackles'].mean()
+        df_dfd_display['Tackles Won%'] = df_dfd_display['Tackles Won'] / df_dfd_display['Tackles Won'].mean()
+        df_dfd_display['Goals Against%'] = df_dfd_display['Goals Against'] / df_dfd_display['Goals Against'].mean()
+        df_dfd_display['Cleansheets%'] = df_dfd_display['Cleansheets'] / df_dfd_display['Cleansheets'].mean()
+        df_dfd_display['xGA%'] = df_dfd_display['xGA'] / df_dfd_display['xGA'].mean()
 
         to_scale = ['Tackles%', 'Tackles Won%', 'Goals Against%', 'Cleansheets%', 'xGA%']
         scaler = MinMaxScaler()
-        df_dfd[to_scale] = scaler.fit_transform(df_dfd[to_scale])
+        df_dfd_display[to_scale] = scaler.fit_transform(df_dfd_display[to_scale])
 
         club_name = "Nott'ham Forest"
-        club_values = df_dfd.loc[club_name, to_scale].tolist()
+        club_values = df_dfd_display.loc[club_name, to_scale].tolist()
         club_values_full = club_values + [club_values[0]]
 
         percentiles = []
         for col in to_scale:
-            val = df_dfd.loc[club_name, col]
+            val = df_dfd_display.loc[club_name, col]
             if col in ['Goals Against%', 'xGA%']:
-                pct = (df_dfd[col] > val).mean()
+                pct = (df_dfd_display[col] > val).mean()
             else:
-                pct = (df_dfd[col] < val).mean()
+                pct = (df_dfd_display[col] < val).mean()
             percentiles.append(int(pct * 100))
 
         percentiles_full = percentiles + [percentiles[0]]
