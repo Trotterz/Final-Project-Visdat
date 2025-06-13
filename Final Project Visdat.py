@@ -8,7 +8,7 @@ import bokeh
 from bokeh.plotting import figure
 from bokeh.io import output_notebook
 from bokeh.io import curdoc
-from bokeh.models import HoverTool, ColumnDataSource, Span, Label
+from bokeh.models import HoverTool, ColumnDataSource, Span, Label, BoxAnnotation
 from streamlit_bokeh import streamlit_bokeh
 import plotly.express as px
 
@@ -128,6 +128,7 @@ with tab1:
     st.subheader("Chance of Goal for Team vs Opponent")
     with st.container():
         rounds = df_gn_display.index.to_list()
+        x_numeric = list(range(len(rounds)))
         x = df_gn_display.index.to_list()
         y = df_gn_display['xG'].to_list()
         y_opp = df_gn_display['xGA'].to_list()
@@ -136,7 +137,7 @@ with tab1:
         # Create a ColumnDataSource with all the necessary data
         notes = ["Head Coach Change" if r == coach_change_round else "" for r in x]
         source = ColumnDataSource(data=dict(
-            x=x,
+            x=x_numeric,
             y=y,
             y_opp=y_opp,
             round=rounds,
