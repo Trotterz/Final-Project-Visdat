@@ -127,28 +127,6 @@ with tab1:
 
     coach_change_round = '23/24_19'
     
-    st.subheader('Average xG and xGA Before and After Coach Change')
-    coach_index = rounds.index(coach_change_round)
-    before_df = df_gn_display.iloc[:coach_index+1]
-    after_df = df_gn_display.iloc[coach_index+1:]
-
-    avg_xg_before = before_df['xG'].mean()
-    avg_xga_before = before_df['xGA'].mean()
-
-    avg_xg_after = after_df['xG'].mean()
-    avg_xga_after = after_df['xGA'].mean()
-
-    # Display metrics
-    col1, col2 = st.columns(2)
-    with col1:
-        st.metric("Avg xG (Before Coach Change)", f"{avg_xg_before:.2f}")
-        st.metric("Avg xGA (Before Coach Change)", f"{avg_xga_before:.2f}")
-    with col2:
-        st.metric("Avg xG (After Coach Change)", f"{avg_xg_after:.2f}")
-        st.metric("Avg xGA (After Coach Change)", f"{avg_xga_after:.2f}")
-    
-    st.markdown("---")
-    
     st.subheader("Chance of Goal for Team vs Opponent")
     with st.container():
         x = df_gn_display.index.to_list()
