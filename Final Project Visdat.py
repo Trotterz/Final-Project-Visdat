@@ -160,7 +160,7 @@ with tab1:
         p.line(x='x', y='y', source=source, legend_label="Team Chances", color="#0072B2", line_width=3)
         p.line(x='x', y='y_opp', source=source, legend_label="Opponent Chances", color="#E69F00", line_width=3)
         p.xaxis.visible = False
-        p.xaxis.major_label_orientation = 0.785
+        # p.xaxis.major_label_orientation = 0.785
 
         # Vertical line for coach change
         if coach_change_round in rounds:
