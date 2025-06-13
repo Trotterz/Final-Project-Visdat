@@ -543,6 +543,21 @@ with tab6:
     - **2023/24:** {total_gfga_2324}
     - **2024/25:** {total_gfga_2425}
     """)
+    
+    # Menyimpan total GF-GA ke dataframe baru
+    df_gfga = pd.DataFrame(
+        {'Total GF-GA': [total_gfga_2223, total_gfga_2324, total_gfga_2425]},
+        index=['22/23', '23/24', '24/25']
+    )
+
+    # Plot tren GF-GA
+    st.markdown("### Grafik Total GF-GA Nottingham Forest tiap Musim")
+    fig_gfga, ax_gfga = plt.subplots(figsize=(10, 6))
+    df_gfga.plot(kind='bar', ax=ax_gfga, legend=False, title='Total GF-GA Nottingham Forest tiap Musim')
+    ax_gfga.axhline(y=0, color='r', linestyle='--')
+    ax_gfga.grid(axis='y')
+    plt.tight_layout()
+    st.pyplot(fig_gfga)
 
 with tab7:
     st.subheader("📋 Player Shooting Data")
