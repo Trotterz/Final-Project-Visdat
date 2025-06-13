@@ -527,72 +527,30 @@ with tab5:
     # Radar Chart (using Plotly)
     if show_radar_def:
         st.markdown("### Radar Chart Performa Defensif (Nottingham Forest)")
-        # Normalisasi data
+        
+        # Normalisasi data, logika ini tetap sama
         to_scale = ['Tackles', 'Tackles Won', 'Goals Against', 'Cleansheets', 'xGA']
         df_scaled = df_dfd_display[to_scale].copy()
         scaler = MinMaxScaler()
         df_scaled[to_scale] = scaler.fit_transform(df_scaled[to_scale])
 
+        # Mengambil data untuk klub yang dipilih
         club_name = "Nott'ham Forest"
         club_values = df_scaled.loc[club_name].tolist()
-        labels = ['Tackles', 'Tackles Won', 'Goals Against', 'Cleansheets', 'xGA']
+        labels = ['Tackles', 'Tackles Won', 'Goals Against', 'Cleansheets', 'xGA'] # Menggunakan label yang rapi
 
-        # --- TAMBAHAN: Logika untuk menghitung persentil ---
-        percentiles = []
-        for col in to_scale:
-            val = df_scaled.loc[club_name, col]
-            # Untuk statistik di mana nilai RENDAH itu BAIK (mis. Goals Against),
-            # kita hitung persentase tim yang punya nilai LEBIH BURUK (lebih tinggi).
-            if col in ['Goals Against', 'xGA']:
-                pct = (df_scaled[col] > val).mean()
-            # Untuk statistik di mana nilai TINGGI itu BAIK (mis. Tackles),
-            # kita hitung persentase tim yang punya nilai LEBIH RENDAH.
-            else:
-                pct = (df_scaled[col] < val).mean()
-            percentiles.append(int(pct * 100))
-    # ----------------------------------------------------
-    df_radar = pd.DataFrame(dict(r=club_values, theta=labels))
-    
-    # Buat chart dasar dengan Plotly Express
-    fig_radar = px.line_polar(df_radar, r='r', theta='theta', line_close=True,
-                              color_discrete_sequence=['#FF4B4B']) # Garis merah
-
-    fig_radar.update_traces(fill='toself') # Isi area radar
-
-    # --- TAMBAHAN: Tambahkan trace baru khusus untuk menampilkan teks persentil ---
-    fig_radar.add_trace(go.Scatterpolar(
-        r=club_values,
-        theta=labels,
-        mode='text', # Mode diatur sebagai 'text'
-        text=[f'<b>{p}%</b>' for p in percentiles], # Teks yang akan ditampilkan (dibuat tebal)
-        textfont=dict(
-            color='white', # Warna teks persentil tetap putih agar jelas
-            size=14
-        )
-    ))
-    # -------------------------------------------------------------------------
-    
-    # Update layout
-    fig_radar.update_layout(
-        polar=dict(
-            radialaxis=dict(
-                visible=True,
-                range=[0, 1],
-                gridcolor="rgba(255, 255, 255, 0.4)",
-                # --- PERUBAHAN: Warna angka diubah menjadi abu-abu terang ---
-                tickfont=dict(color="lightgrey"),
-            ),
-            angularaxis=dict(
-                tickfont=dict(color="white"),
-            )
-        ),
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        showlegend=False # Sembunyikan legenda karena tidak diperlukan
-    )
-    
-    st.plotly_chart(fig_radar, use_container_width=True)
-
+        # Menyiapkan DataFrame untuk Plotly
+        df_radar = pd.DataFrame(dict(r=club_values, theta=labels))
+        
+        # Membuat radar chart dengan Plotly Express (versi sederhana)
+        fig_radar = px.line_polar(df_radar, r='r', theta='theta', line_close=True)
+        
+        # Mengisi area di dalam garis radar
+        fig_radar.update_traces(fill='toself')
+        
+        # Menampilkan chart menggunakan st.plotly_chart
+        # Ini akan secara otomatis menggunakan tema Streamlit (terang atau gelap)
+        st.plotly_chart(fig_radar, use_container_width=True)
 
 with tab6:
     st.subheader("📅 Detailed GCA Data")
