@@ -181,6 +181,7 @@ with tab1:
         # Vertical line for coach change
         if coach_change_round in rounds:
             coach_index = rounds.index(coach_change_round)
+            y_value_at_change = y[coach_index]
 
             # Garis vertikal
             vline = Span(location=coach_index, dimension='height', line_color='red', line_width=2, line_dash='dashed')
