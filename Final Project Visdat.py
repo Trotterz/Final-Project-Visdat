@@ -533,6 +533,7 @@ with tab5:
            label='Tackles Att 3rd',
            color='#ff7f0e')
 
+    ax.set_axisbelow(True)
     ax.grid(True, axis='y', linestyle='--', alpha=0.7)
     
     ax.set_xticks(range(len(tackles_data)))
