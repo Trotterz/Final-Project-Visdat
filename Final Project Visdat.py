@@ -130,7 +130,7 @@ with tab1:
     st.subheader("Chance of Goal for Team vs Opponent")
     with st.container():
         x = df_gn_display.index.to_list()
-        x_numeric = list(range(len(x_labels)))
+        x_numeric = list(range(len(x)))
         y = df_gn_display['xG'].to_list()
         y_opp = df_gn_display['xGA'].to_list()
         
