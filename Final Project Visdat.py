@@ -150,7 +150,7 @@ with tab1:
                 ("Round", "@x"),
                 ("Team Chances", "@y"),
                 ("Opponent Chances", "@y_opp"),
-                ("Head Coach Change", "@note"),
+                ("Note", "@note"),
             ],
             mode='mouse' # Add mode='mouse' for better interaction
         )
@@ -159,6 +159,7 @@ with tab1:
         # add multiple renderers
         p.line(x='x', y='y', source=source, legend_label="Team Chances", color="#0072B2", line_width=3)
         p.line(x='x', y='y_opp', source=source, legend_label="Opponent Chances", color="#E69F00", line_width=3)
+        p.line(x=[None], y=[None], legend_label="Head Coach Change", line_color="red", line_dash="dashed", line_width=2)
         p.xaxis.major_label_orientation = 0.785
 
         # Add vertical line for coach change at '23/24_19'
