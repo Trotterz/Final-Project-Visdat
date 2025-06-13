@@ -130,7 +130,8 @@ with tab1:
         x = df_gn_display.index.to_list()
         y = df_gn_display['xG'].to_list()
         y_opp = df_gn_display['xGA'].to_list()
-
+        coach_change_round = '23/24_19'
+        
         # Create a ColumnDataSource with all the necessary data
         notes = ["Head Coach Change" if r == coach_change_round else "" for r in x]
         source = ColumnDataSource(data=dict(
@@ -161,7 +162,6 @@ with tab1:
         p.xaxis.major_label_orientation = 0.785
 
         # Add vertical line for coach change at '23/24_19'
-        coach_change_round = '23/24_19'
         if coach_change_round in x:
             index_loc = x.index(coach_change_round)
             vline = Span(location=index_loc, dimension='height', line_color='red', line_width=2, line_dash='dashed')
