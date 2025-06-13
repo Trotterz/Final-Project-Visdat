@@ -193,8 +193,8 @@ with tab1:
             # Shading: setelah
             after_box = BoxAnnotation(left=coach_index + 1, fill_alpha=0.1, fill_color='peachpuff')
             p.add_layout(after_box)
-        
-        p.line(x=[0], y=[0], line_color='red', line_dash='dashed', legend_label='Head Coach Change', alpha=0)
+
+            p.line(x=[coach_index], y=[y_value_at_change], line_color='red', line_dash='dashed', legend_label='Head Coach Change')
         
         # show the results
         streamlit_bokeh(p, theme='dark_minimal')
