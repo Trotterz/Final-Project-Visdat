@@ -536,83 +536,57 @@ with tab5:
         # Warna juga disesuaikan untuk merepresentasikan area: Biru (Def), Hijau (Mid), Merah (Att).
         st.bar_chart(tackles_for_plot, color=["#3E68C9", "#29B09D", "#FF4B4B"])
 
-    # Radar Chart (mengikuti logika Matplotlib)
     if show_radar_def:
-        st.markdown("### Radar Chart Performa Defensif (Nottingham Forest)")
+        # Radar chart untuk performa defensif Nottingham Forest
 
-        # --- PERUBAHAN: Mengikuti logika persiapan data dari contoh Anda ---
+        df_dfd_display['Tackles%'] = df_dfd_display['Tackles'] / df_dfd_display['Tackles'].mean()
+        df_dfd_display['Tackles Won%'] = df_dfd_display['Tackles Won'] / df_dfd_display['Tackles Won'].mean()
+        df_dfd_display['Goals Against%'] = df_dfd_display['Goals Against'] / df_dfd_display['Goals Against'].mean()
+        df_dfd_display['Cleansheets%'] = df_dfd_display['Cleansheets'] / df_dfd_display['Cleansheets'].mean()
+        df_dfd_display['xGA%'] = df_dfd_display['xGA'] / df_dfd_display['xGA'].mean()
 
-        # 1. Normalisasi data terhadap rata-rata liga
-        df_norm = df_dfd_display.copy()
-        df_norm['Tackles%'] = df_norm['Tackles'] / df_norm['Tackles'].mean()
-        df_norm['Tackles Won%'] = df_norm['Tackles Won'] / df_norm['Tackles Won'].mean()
-        df_norm['Goals Against%'] = df_norm['Goals Against'] / df_norm['Goals Against'].mean()
-        df_norm['Cleansheets%'] = df_norm['Cleansheets'] / df_norm['Cleansheets'].mean()
-        df_norm['xGA%'] = df_norm['xGA'] / df_norm['xGA'].mean()
-
-        # 2. Terapkan MinMaxScaler pada kolom yang sudah dinormalisasi
         to_scale = ['Tackles%', 'Tackles Won%', 'Goals Against%', 'Cleansheets%', 'xGA%']
         scaler = MinMaxScaler()
-        df_norm[to_scale] = scaler.fit_transform(df_norm[to_scale])
+        df_dfd_display[to_scale] = scaler.fit_transform(df_dfd_display[to_scale])
 
-        # 3. Ambil nilai untuk klub dan siapkan untuk plotting
         club_name = "Nott'ham Forest"
-        club_values = df_norm.loc[club_name, to_scale].tolist()
-        club_values_full = club_values + [club_values[0]] # Tambahkan titik pertama di akhir untuk menutup chart
+        club_values = df_dfd_display.loc[club_name, to_scale].tolist()
+        club_values_full = club_values + [club_values[0]]
 
-        # 4. Hitung persentil seperti pada contoh Anda
         percentiles = []
         for col in to_scale:
-            val = df_norm.loc[club_name, col]
-            if col in ['Goals Against%', 'xGA%']: # Logika terbalik untuk metrik 'buruk'
-                pct = (df_norm[col] > val).mean()
-            else: # Logika normal untuk metrik 'baik'
-                pct = (df_norm[col] < val).mean()
+            val = df_dfd_display.loc[club_name, col]
+            if col in ['Goals Against%', 'xGA%']:
+                pct = (df_dfd_display[col] > val).mean()
+            else:
+                pct = (df_dfd_display[col] < val).mean()
             percentiles.append(int(pct * 100))
+
         percentiles_full = percentiles + [percentiles[0]]
 
-        # 5. Siapkan label untuk sumbu
         labels = ['Tackles', 'Tackles Won', 'Goals Against', 'Cleansheets', 'xGA']
-        labels_full = labels + [labels[0]]
+        num_vars = len(labels)
+        angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
+        angles_full = angles + [angles[0]]
 
-        # --- Pembuatan Chart dengan Plotly Graph Objects ---
+        fig_radar, ax_radar = plt.subplots(figsize=(8, 8), subplot_kw=dict(polar=True))
+        ax_radar.set_theta_offset(np.pi / 2)
+        ax_radar.set_theta_direction(-1)
+        ax_radar.set_xticks(angles)
+        ax_radar.set_xticklabels(labels, fontsize=11, fontweight='medium')
+        ax_radar.set_yticks([0.25, 0.5, 0.75, 1.0])
+        ax_radar.set_ylim(0, 1.2)
 
-        fig = go.Figure()
+        ax_radar.plot(angles_full, club_values_full, color='royalblue', linewidth=2)
+        ax_radar.fill(angles_full, club_values_full, color='royalblue', alpha=0.25)
 
-        # Tambahkan trace untuk garis dan area isian (fill)
-        fig.add_trace(go.Scatterpolar(r=club_values_full,theta=labels_full,fill='toself',fillcolor='rgba(65, 105, 225, 0.25)',line=dict(color='royalblue'), name=club_name))
+        for angle, value, pct in zip(angles_full, club_values_full, percentiles_full):
+            y_pos = value + 0.06
+            y_pos = min(y_pos, 1.15)
+            ax_radar.text(angle, y_pos, f"{pct}%", ha='center', va='center',
+                          fontsize=10, fontweight='bold', color='black')
 
-        # Tambahkan trace terpisah hanya untuk teks persentil
-        fig.add_trace(go.Scatterpolar( r=[v + 0.08 for v in club_values_full], theta=labels_full, mode='text', text=[f'<b>{p}%</b>' for p in percentiles_full], textfont=dict(color='white', size=14)))
-
-        # Atur layout chart agar sesuai dengan contoh Matplotlib
-        fig.update_layout(
-            title={
-                'text': "<b>Performa Nottingham Forest pada Tiap Metrik Pertahanan</b>",
-                'y':0.95,
-                'x':0.5,
-                'xanchor': 'center',
-                'yanchor': 'top'
-            },
-            polar=dict(
-                radialaxis=dict(
-                    visible=True,
-                    range=[0, 1.2], # Beri ruang untuk teks di atas
-                    tickvals=[0.25, 0.5, 0.75, 1.0],
-                    gridcolor="rgba(255, 255, 255, 0.4)",
-                    tickfont=dict(color="lightgrey")
-                ),
-                angularaxis=dict(
-                    tickfont=dict(color="white", size=12)
-                ),
-                rotation=90, # Mulai dari atas
-                direction="clockwise" # Arah putaran searah jarum jam
-            ),
-            template='plotly_dark',
-            showlegend=False
-        )
-
-        st.plotly_chart(fig, use_container_width=True)
+    st.pyplot(fig_radar)
 
 with tab6:
     st.subheader("📅 Detailed GCA Data")
