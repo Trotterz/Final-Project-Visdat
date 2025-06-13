@@ -517,40 +517,102 @@ with tab5:
     # Stacked Bar Chart for Tackles
     if show_tackles_stack:
         st.markdown("### Tackles per Area (Stacked Bar)")
-        tackles_data = df_dfd_display[['Tackles Def 3rd', 'Tackles Mid 3rd', 'Tackles Att 3rd']].copy()
-        
-        # --- PERUBAHAN ---
-        # st.bar_chart secara otomatis akan membuat legenda dari nama kolom.
-        # Kita bisa menambahkan palet warna kustom seperti ini:
-        st.bar_chart(tackles_data, color=["#FF4B4B", "#3E68C9", "#29B09D"]) # Merah, Biru, Tosca
 
-    # Radar Chart (using Plotly)
+        # --- PERUBAHAN DIMULAI DI SINI ---
+
+        # 1. Pilih kolom yang diperlukan, termasuk 'Goals Against' untuk pengurutan.
+        tackles_to_sort = df_dfd_display[['Tackles Def 3rd', 'Tackles Mid 3rd', 'Tackles Att 3rd', 'Goals Against']].copy()
+
+        # 2. Urutkan DataFrame berdasarkan 'Goals Against' secara menurun.
+        tackles_sorted = tackles_to_sort.sort_values(by='Goals Against', ascending=False)
+
+        # 3. Siapkan data final untuk plotting dengan urutan kolom yang benar untuk stacking.
+        # Urutan kolom di sini menentukan urutan tumpukan dari bawah ke atas.
+        tackles_for_plot = tackles_sorted[['Tackles Def 3rd', 'Tackles Mid 3rd', 'Tackles Att 3rd']]
+        
+        # --- PERUBAHAN SELESAI ---
+
+        # st.bar_chart akan secara otomatis menumpuk kolom sesuai urutan di `tackles_for_plot`.
+        # Warna juga disesuaikan untuk merepresentasikan area: Biru (Def), Hijau (Mid), Merah (Att).
+        st.bar_chart(tackles_for_plot, color=["#3E68C9", "#29B09D", "#FF4B4B"])
+
+    # Radar Chart (mengikuti logika Matplotlib)
     if show_radar_def:
         st.markdown("### Radar Chart Performa Defensif (Nottingham Forest)")
-        
-        # Normalisasi data, logika ini tetap sama
-        to_scale = ['Tackles', 'Tackles Won', 'Goals Against', 'Cleansheets', 'xGA']
-        df_scaled = df_dfd_display[to_scale].copy()
+
+        # --- PERUBAHAN: Mengikuti logika persiapan data dari contoh Anda ---
+
+        # 1. Normalisasi data terhadap rata-rata liga
+        df_norm = df_dfd_display.copy()
+        df_norm['Tackles%'] = df_norm['Tackles'] / df_norm['Tackles'].mean()
+        df_norm['Tackles Won%'] = df_norm['Tackles Won'] / df_norm['Tackles Won'].mean()
+        df_norm['Goals Against%'] = df_norm['Goals Against'] / df_norm['Goals Against'].mean()
+        df_norm['Cleansheets%'] = df_norm['Cleansheets'] / df_norm['Cleansheets'].mean()
+        df_norm['xGA%'] = df_norm['xGA'] / df_norm['xGA'].mean()
+
+        # 2. Terapkan MinMaxScaler pada kolom yang sudah dinormalisasi
+        to_scale = ['Tackles%', 'Tackles Won%', 'Goals Against%', 'Cleansheets%', 'xGA%']
         scaler = MinMaxScaler()
-        df_scaled[to_scale] = scaler.fit_transform(df_scaled[to_scale])
+        df_norm[to_scale] = scaler.fit_transform(df_norm[to_scale])
 
-        # Mengambil data untuk klub yang dipilih
+        # 3. Ambil nilai untuk klub dan siapkan untuk plotting
         club_name = "Nott'ham Forest"
-        club_values = df_scaled.loc[club_name].tolist()
-        labels = ['Tackles', 'Tackles Won', 'Goals Against', 'Cleansheets', 'xGA'] # Menggunakan label yang rapi
+        club_values = df_norm.loc[club_name, to_scale].tolist()
+        club_values_full = club_values + [club_values[0]] # Tambahkan titik pertama di akhir untuk menutup chart
 
-        # Menyiapkan DataFrame untuk Plotly
-        df_radar = pd.DataFrame(dict(r=club_values, theta=labels))
-        
-        # Membuat radar chart dengan Plotly Express (versi sederhana)
-        fig_radar = px.line_polar(df_radar, r='r', theta='theta', line_close=True)
-        
-        # Mengisi area di dalam garis radar
-        fig_radar.update_traces(fill='toself')
-        
-        # Menampilkan chart menggunakan st.plotly_chart
-        # Ini akan secara otomatis menggunakan tema Streamlit (terang atau gelap)
-        st.plotly_chart(fig_radar, use_container_width=True)
+        # 4. Hitung persentil seperti pada contoh Anda
+        percentiles = []
+        for col in to_scale:
+            val = df_norm.loc[club_name, col]
+            if col in ['Goals Against%', 'xGA%']: # Logika terbalik untuk metrik 'buruk'
+                pct = (df_norm[col] > val).mean()
+            else: # Logika normal untuk metrik 'baik'
+                pct = (df_norm[col] < val).mean()
+            percentiles.append(int(pct * 100))
+        percentiles_full = percentiles + [percentiles[0]]
+
+        # 5. Siapkan label untuk sumbu
+        labels = ['Tackles', 'Tackles Won', 'Goals Against', 'Cleansheets', 'xGA']
+        labels_full = labels + [labels[0]]
+
+        # --- Pembuatan Chart dengan Plotly Graph Objects ---
+
+        fig = go.Figure()
+
+        # Tambahkan trace untuk garis dan area isian (fill)
+        fig.add_trace(go.Scatterpolar(r=club_values_full,theta=labels_full,fill='toself',fillcolor='rgba(65, 105, 225, 0.25)',line=dict(color='royalblue'), name=club_name))
+
+        # Tambahkan trace terpisah hanya untuk teks persentil
+        fig.add_trace(go.Scatterpolar( r=[v + 0.08 for v in club_values_full], theta=labels_full, mode='text', text=[f'<b>{p}%</b>' for p in percentiles_full], textfont=dict(color='white', size=14)))
+
+        # Atur layout chart agar sesuai dengan contoh Matplotlib
+        fig.update_layout(
+            title={
+                'text': "<b>Performa Nottingham Forest pada Tiap Metrik Pertahanan</b>",
+                'y':0.95,
+                'x':0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'
+            },
+            polar=dict(
+                radialaxis=dict(
+                    visible=True,
+                    range=[0, 1.2], # Beri ruang untuk teks di atas
+                    tickvals=[0.25, 0.5, 0.75, 1.0],
+                    gridcolor="rgba(255, 255, 255, 0.4)",
+                    tickfont=dict(color="lightgrey")
+                ),
+                angularaxis=dict(
+                    tickfont=dict(color="white", size=12)
+                ),
+                rotation=90, # Mulai dari atas
+                direction="clockwise" # Arah putaran searah jarum jam
+            ),
+            template='plotly_dark',
+            showlegend=False
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
 
 with tab6:
     st.subheader("📅 Detailed GCA Data")
