@@ -142,7 +142,7 @@ with tab1:
         ))
 
         # create a new plot with a title and axis labels
-        p = figure(x_axis_label="Round", y_axis_label="Value", x_range=x, height=140, sizing_mode="stretch_width")
+        p = figure(x_axis_label="Round", y_axis_label="Value", x_range=x, height=400, sizing_mode="stretch_width")
 
         # Add a HoverTool
         hover = HoverTool(
@@ -159,6 +159,7 @@ with tab1:
         # add multiple renderers
         p.line(x='x', y='y', source=source, legend_label="Team Chances", color="#0072B2", line_width=3)
         p.line(x='x', y='y_opp', source=source, legend_label="Opponent Chances", color="#E69F00", line_width=3)
+        p.xaxis.visible = False
         p.xaxis.major_label_orientation = 0.785
 
         # Vertical line for coach change
