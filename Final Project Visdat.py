@@ -441,6 +441,7 @@ with tab5:
     show_cleansheets = st.checkbox("Tampilkan Cleansheets")
     show_xga = st.checkbox("Tampilkan xGA")
     show_tackles_stack = st.checkbox("Tampilkan Tackles per Area (Stacked)")
+    show_radar_def = st.checkbox("Tampilkan Radar Chart Pertahanan (Nottingham Forest)")
 
     # Goals Against
     if show_goals_against:
@@ -498,6 +499,58 @@ with tab5:
         ax_def4.tick_params(axis='x', rotation=45)
         ax_def4.legend()
         st.pyplot(fig_def4)
+        
+    if show_radar_def:
+        # Radar chart untuk performa defensif Nottingham Forest
+        df_dfd['Tackles%'] = df_dfd['Tackles'] / df_dfd['Tackles'].mean()
+        df_dfd['Tackles Won%'] = df_dfd['Tackles Won'] / df_dfd['Tackles Won'].mean()
+        df_dfd['Goals Against%'] = df_dfd['Goals Against'] / df_dfd['Goals Against'].mean()
+        df_dfd['Cleansheets%'] = df_dfd['Cleansheets'] / df_dfd['Cleansheets'].mean()
+        df_dfd['xGA%'] = df_dfd['xGA'] / df_dfd['xGA'].mean()
+
+        to_scale = ['Tackles%', 'Tackles Won%', 'Goals Against%', 'Cleansheets%', 'xGA%']
+        scaler = MinMaxScaler()
+        df_dfd[to_scale] = scaler.fit_transform(df_dfd[to_scale])
+
+        club_name = "Nott'ham Forest"
+        club_values = df_dfd.loc[club_name, to_scale].tolist()
+        club_values_full = club_values + [club_values[0]]
+
+        percentiles = []
+        for col in to_scale:
+            val = df_dfd.loc[club_name, col]
+            if col in ['Goals Against%', 'xGA%']:
+                pct = (df_dfd[col] > val).mean()
+            else:
+                pct = (df_dfd[col] < val).mean()
+            percentiles.append(int(pct * 100))
+
+        percentiles_full = percentiles + [percentiles[0]]
+
+        labels = ['Tackles', 'Tackles Won', 'Goals Against', 'Cleansheets', 'xGA']
+        num_vars = len(labels)
+        angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
+        angles_full = angles + [angles[0]]
+
+        fig_radar, ax_radar = plt.subplots(figsize=(8, 8), subplot_kw=dict(polar=True))
+
+        ax_radar.set_theta_offset(np.pi / 2)
+        ax_radar.set_theta_direction(-1)
+        ax_radar.set_xticks(angles)
+        ax_radar.set_xticklabels(labels, fontsize=11, fontweight='medium')
+        ax_radar.set_yticks([0.25, 0.5, 0.75, 1.0])
+        ax_radar.set_ylim(0, 1.2)
+
+        ax_radar.plot(angles_full, club_values_full, color='royalblue', linewidth=2)
+        ax_radar.fill(angles_full, club_values_full, color='royalblue', alpha=0.25)
+
+        for angle, value, pct in zip(angles_full, club_values_full, percentiles_full):
+            y_pos = value + 0.06
+            y_pos = min(y_pos, 1.15)
+            ax_radar.text(angle, y_pos, f"{pct}%", ha='center', va='center', fontsize=10, fontweight='bold', color='black')
+
+        st.pyplot(fig_radar)
+
 
 with tab6:
     st.subheader("📅 Detailed GCA Data")
