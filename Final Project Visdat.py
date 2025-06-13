@@ -165,8 +165,8 @@ with tab1:
         p.xaxis.major_label_overrides = {i: x[i] for i in ticker_indices}
         p.xaxis.major_label_orientation = 0.785
 
-        ticker_indices = list(range(0, len(x), 5))
-        p.xaxis.ticker = FixedTicker(ticks=ticker_indices)
+        # ticker_indices = list(range(0, len(x), 5))
+        # p.xaxis.ticker = FixedTicker(ticks=ticker_indices)
 
         # Vertical line for coach change
         if coach_change_round in rounds:
