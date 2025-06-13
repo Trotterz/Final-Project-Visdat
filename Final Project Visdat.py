@@ -145,7 +145,7 @@ with tab1:
         ))
 
         # create a new plot with a title and axis labels
-        p = figure(x_axis_label="Round", y_axis_label="Value", x_range=x, height=140, sizing_mode="stretch_width")
+        p = figure(x_axis_label="Round", y_axis_label="Value", height=140, sizing_mode="stretch_width")
 
         # Add a HoverTool
         hover = HoverTool(
