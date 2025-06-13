@@ -138,7 +138,6 @@ with tab1:
             x=x,
             y=y,
             y_opp=y_opp,
-            round=rounds,
             note=notes
         ))
 
@@ -160,6 +159,10 @@ with tab1:
         # add multiple renderers
         p.line(x='x', y='y', source=source, legend_label="Team Chances", color="#0072B2", line_width=3)
         p.line(x='x', y='y_opp', source=source, legend_label="Opponent Chances", color="#E69F00", line_width=3)
+
+        ticker_indices = list(range(0, len(x), 5))
+        p.xaxis.ticker = FixedTicker(ticks=ticker_indices)
+        p.xaxis.major_label_overrides = {i: x[i] for i in ticker_indices}
         p.xaxis.major_label_orientation = 0.785
 
         ticker_indices = list(range(0, len(x), 5))
